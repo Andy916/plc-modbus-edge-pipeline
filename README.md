@@ -13,3 +13,7 @@ A simulated end-to-end industrial control and data pipeline demonstrating Modbus
 * **Protocols:** Modbus TCP, MQTT, JSON
 * **Edge / UI:** Node-RED, FlowFuse Dashboard
 * **Driver:** Python (`pymodbus`)
+
+## System Architecture & Live Execution
+
+![Full End-to-End Industrial Pipeline Execution](full-system-pipeline.png)
