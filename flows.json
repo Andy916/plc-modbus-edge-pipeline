@@ -1,0 +1,337 @@
+[
+    {
+        "id": "c17b4e98c6e2f115",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "ea20bbc5e6ec813c",
+        "type": "function",
+        "z": "c17b4e98c6e2f115",
+        "name": "function 1",
+        "func": "let rawLevel = msg.payload;\n\n// JavaScript Transformation: Determine system state\nlet statusText = \"NORMAL\";\nlet alarmActive = false;\n\nif (rawLevel > 85) {\n    statusText = \"HIGH LEVEL WARNING!\";\n    alarmActive = true;\n}\n\n// Output 1 format for Local HMI Gauge (just the number)\nlet hmiMsg = { payload: rawLevel };\n\n// Output 2 format for MQTT / Tier 4 Enterprise JSON payload\nlet mqttMsg = {\n    payload: {\n        device: \"Tank_System_01\",\n        register: \"MHR1\",\n        tank_level_pct: rawLevel,\n        status: statusText,\n        alarm: alarmActive,\n        timestamp: Date.now()\n    }\n};\n\nreturn [hmiMsg, mqttMsg];",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 460,
+        "wires": [
+            [
+                "9253c2962447111f"
+            ],
+            [
+                "329902c341c13789"
+            ]
+        ]
+    },
+    {
+        "id": "0498c8c04fac7ac3",
+        "type": "modbus-read",
+        "z": "c17b4e98c6e2f115",
+        "name": "",
+        "topic": "",
+        "showStatusActivities": false,
+        "logIOActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "unitid": "",
+        "dataType": "HoldingRegister",
+        "adr": "0",
+        "quantity": "1",
+        "rate": "2",
+        "rateUnit": "s",
+        "delayOnStart": false,
+        "enableDeformedMessages": false,
+        "startDelayTime": "",
+        "server": "f31af584ff8fbb2d",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "x": 130,
+        "y": 460,
+        "wires": [
+            [
+                "ea20bbc5e6ec813c"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "9253c2962447111f",
+        "type": "ui-gauge",
+        "z": "c17b4e98c6e2f115",
+        "name": "",
+        "group": "1db76f10ec0739d0",
+        "order": 0,
+        "value": "payload",
+        "valueType": "msg",
+        "width": 3,
+        "height": 3,
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "gauge",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "units",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "75",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "90",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 570,
+        "y": 360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "329902c341c13789",
+        "type": "mqtt out",
+        "z": "c17b4e98c6e2f115",
+        "name": "",
+        "topic": "factory/line1/tank_monitor",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "944972ba8508d1a7",
+        "x": 630,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "3687a03a9a565725",
+        "type": "mqtt in",
+        "z": "c17b4e98c6e2f115",
+        "name": "",
+        "topic": "factory/line1/tank_monitor",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "944972ba8508d1a7",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 130,
+        "y": 700,
+        "wires": [
+            [
+                "fa92ed5fcda7ddd0"
+            ]
+        ]
+    },
+    {
+        "id": "fa92ed5fcda7ddd0",
+        "type": "debug",
+        "z": "c17b4e98c6e2f115",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 360,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "f31af584ff8fbb2d",
+        "type": "modbus-client",
+        "name": "",
+        "clienttype": "tcp",
+        "bufferCommands": true,
+        "stateLogEnabled": false,
+        "queueLogEnabled": false,
+        "failureLogEnabled": true,
+        "tcpHost": "172.24.240.1",
+        "tcpPort": 502,
+        "tcpType": "DEFAULT",
+        "serialPort": "/dev/ttyUSB",
+        "serialType": "RTU-BUFFERD",
+        "serialBaudrate": 9600,
+        "serialDatabits": 8,
+        "serialStopbits": 1,
+        "serialParity": "none",
+        "serialConnectionDelay": 100,
+        "serialAsciiResponseStartDelimiter": "0x3A",
+        "unit_id": 1,
+        "commandDelay": 1,
+        "clientTimeout": 1000,
+        "reconnectOnTimeout": true,
+        "reconnectTimeout": 2000,
+        "parallelUnitIdsAllowed": true,
+        "showErrors": false,
+        "showWarnings": true,
+        "showLogs": true
+    },
+    {
+        "id": "1db76f10ec0739d0",
+        "type": "ui-group",
+        "name": "Group 1",
+        "page": "d39ed490f4213b2b",
+        "width": 6,
+        "height": 1,
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default",
+        "keepLoaded": false,
+        "tab": ""
+    },
+    {
+        "id": "944972ba8508d1a7",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "broker.hivemq.com",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "d39ed490f4213b2b",
+        "type": "ui-page",
+        "name": "Page 1",
+        "ui": "2dba3f621cab0d98",
+        "path": "/page1",
+        "icon": "home",
+        "layout": "grid",
+        "theme": "4b013dd0d0f79e8e",
+        "breakpoints": [
+            {
+                "name": "Default",
+                "px": 0,
+                "cols": 3
+            },
+            {
+                "name": "Tablet",
+                "px": 576,
+                "cols": 6
+            },
+            {
+                "name": "Small Desktop",
+                "px": 768,
+                "cols": 9
+            },
+            {
+                "name": "Desktop",
+                "px": 1024,
+                "cols": 12
+            }
+        ],
+        "tabs": [],
+        "order": 1,
+        "className": "",
+        "visible": true,
+        "disabled": false
+    },
+    {
+        "id": "2dba3f621cab0d98",
+        "type": "ui-base",
+        "name": "My Dashboard",
+        "path": "/dashboard",
+        "appIcon": "",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ],
+        "showPathInSidebar": false,
+        "headerContent": "page",
+        "navigationStyle": "default",
+        "titleBarStyle": "default",
+        "showReconnectNotification": true,
+        "notificationDisplayTime": 1,
+        "showDisconnectNotification": true,
+        "allowInstall": false
+    },
+    {
+        "id": "4b013dd0d0f79e8e",
+        "type": "ui-theme",
+        "name": "Default Theme",
+        "colors": {
+            "surface": "#fcfcfd",
+            "primary": "#0d74ce",
+            "bgPage": "#f9f9fb",
+            "groupBg": "#ffffff",
+            "groupOutline": "#d9d9e0"
+        },
+        "sizes": {
+            "density": "default",
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    },
+    {
+        "id": "38347cd4d14a7f27",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-contrib-modbus": "5.62.1",
+            "@flowfuse/node-red-dashboard": "1.36.0"
+        }
+    }
+]
